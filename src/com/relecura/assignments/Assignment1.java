@@ -173,14 +173,15 @@ public class Assignment1 {
 									 answer = reShufflingTheString(answer);
 								 }
 								 temp1 = str.substring(str.indexOf(")")+1,str.length());
+								 temp1  = temp1.replace(")","");
 								 temp1 = assignBracketsRecursively(temp1);
+								 temp1 = reShufflingTheString(temp1);
 								 
-								 answer = "\""+temp+"\""+temp1;
+								 answer = "\""+temp+temp1+"\"";
 						}
 							
 				    }else {
 				      answer = str.substring(str.indexOf("(")+1,str.length());
-				     // answer = str.substring(str.indexOf("(")+1,str.indexOf(")"));
 				      answer = "["+answer+"]";
 				      answer = reShufflingTheString(answer);
 				    }
