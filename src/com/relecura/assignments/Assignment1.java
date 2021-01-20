@@ -154,7 +154,7 @@ public class Assignment1 {
 		else {
 			//String reshuffled = null;
 			 String answer = str;
-			 String temp = null;
+			 String temp = null,temp1=null;
 			boolean flag = false;
 			 if(str.contains("(")) {
 				 Stack<String> stack = new Stack<String>(); 
@@ -166,16 +166,21 @@ public class Assignment1 {
 						flag = stack.pop().equalsIgnoreCase("(") ? true:false;
 						if(flag) { 
 								 answer = str.substring(str.indexOf("(")+1,str.indexOf(")"));
+								// answer = str.substring(str.indexOf("(")+1,str.length());
 								 if(answer.contains("(")) {
 									 temp = assignBracketsRecursively(answer);
 								 }else {
 									 answer = reShufflingTheString(answer);
 								 }
-								 answer = "\""+temp+"\"";
+								 temp1 = str.substring(str.indexOf(")")+1,str.length());
+								 temp1 = assignBracketsRecursively(temp1);
+								 
+								 answer = "\""+temp+"\""+temp1;
 						}
 							
 				    }else {
 				      answer = str.substring(str.indexOf("(")+1,str.length());
+				     // answer = str.substring(str.indexOf("(")+1,str.indexOf(")"));
 				      answer = "["+answer+"]";
 				      answer = reShufflingTheString(answer);
 				    }
