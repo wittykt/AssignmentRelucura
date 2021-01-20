@@ -1,5 +1,11 @@
+
 package com.relecura.assignments;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 
 /**
@@ -29,35 +35,49 @@ import java.util.Stack;
 public class Assignment1 {
 	final static String constantNEAR = "NEAR";
 	final static String constantADJ = "ADJ";
-
+	final static String constantNEAR_SYMBOL = "~";
+	final static String constantADJ_SYMBOL = "~>";
 	public static void main(String[] args) {
+
+//		System.out.println("--------------");
 //		System.out.println("Test Case1:");
-//		String input1 = "((java NEAR2 collection NEAR framework) OR (java ADJ3 collection) AND (java NEAR3 multithreading))";
-//		//(("[java collection]~2 framework"~1) OR "java collection"~>3 AND "java multithreading"~3)
-//		getOutputOngivenConditions(input1);
+//		String input1 = "( (java NEAR2 collection)  NEAR framework) OR  (java ADJ3 collection) AND (java NEAR3 multithreading)";
+//	   getOutputOngivenConditions(input1);
+		
 		System.out.println("--------------");
-		System.out.println("Test Case1:");
-		String input1 = "( (java NEAR2 collection NEAR framework) OR  (java ADJ3 collection) AND (java NEAR3 multithreading))";
+		System.out.println("Test Case 5:");
+		String input1 = "( (java NEAR2 collection)  NEAR framework) ";
 	   getOutputOngivenConditions(input1);
 		
-	   System.out.println("--------------");
-		System.out.println("Test Case2:");
-		String input0 = "(a NEAR3 b)";
-		getOutputOngivenConditions(input0);
-		
-		System.out.println("--------------");
-		System.out.println("Test Case3:Unchanged Output");
-		String input2 = "(((a AND b) OR c) OR (d AND e))";
-		getOutputOngivenConditions(input2);
+//	   System.out.println("--------------");
+//		System.out.println("Test Case2:");
+//		String input0 = "(a NEAR3 b)";
+//		getOutputOngivenConditions(input0);
+//		
+//		System.out.println("--------------");
+//		System.out.println("Test Case3:Unchanged Output");
+//		String input2 = "(((a AND b) OR c) OR (d AND e))";
+//		getOutputOngivenConditions(input2);
 	}
 	 public static void getOutputOngivenConditions(String input1) {
 		
 		 String orgStr = input1;
 		 if(input1.contains("NEAR") ||  input1.contains("ADJ") ) {
-		//Working code	
+			 List<String> list = new ArrayList<>();
+			 StringBuffer sb = new StringBuffer();
 			 String replacedStr = replaceNEARandADJ(input1);
-			 String finalStr   = checkTheBalanceBracket(replacedStr);
-			 System.out.println(finalStr);
+			 
+			 Map<String, Object> mapObjTemp = getStringBetweenBraces(replacedStr);
+			 for (Entry<String, Object> entry : mapObjTemp.entrySet()) {
+				 if(entry.getValue().toString().contains(constantNEAR_SYMBOL) || entry.getValue().toString().contains(constantADJ_SYMBOL) ) {
+					 String shuffledStr  = reShufflingTheString(entry.getValue().toString());
+					 sb.append(shuffledStr);
+				 }else {
+					 sb.append(entry.getValue().toString());
+				 }
+				
+			}
+			 System.out.println(sb.toString());
 
 		 }else {
 			 System.out.println(orgStr);
@@ -88,6 +108,7 @@ public class Assignment1 {
 	 }
 	 
 	public static String checkTheBalanceBracket(String st) {
+		
 		 String shuffledStr  = reShufflingTheString(st);
 		 System.out.println("ReShuffled Str:"+shuffledStr);
 		 
@@ -116,11 +137,43 @@ public class Assignment1 {
 			 }
 			// sbTemp.append(st1[i]);
 		 }
-		
-		 
+				 
 		 return shuffledStr;
 	 }
-	
+	public static  Map<String, Object> getStringBetweenBraces(String str) {
+		 String[] st1 = str.split("");
+		 Stack<String> stack = new Stack<String>();
+		 Map<String, Object> mapObjTemp =new LinkedHashMap<String,Object>();
+
+		 Stack<Integer> stackTemp = new Stack<Integer>();
+		 boolean flag = false;
+		 
+		 for (int i = 0, j=0; i < st1.length; i++,j++) {
+			 if(st1[i].equalsIgnoreCase("(")) {
+				 stack.push(st1[i]);
+				 stackTemp.push(i);
+			 }
+			 if(!stack.isEmpty() ) {
+				 if(st1[i].equalsIgnoreCase(")")) {
+						flag = stack.pop().equalsIgnoreCase("(") ? true:false;
+						if(flag) {
+							Integer temp = stackTemp.pop();
+							 String answer = str.substring(temp+1,i);
+							 if(!stack.isEmpty()) {
+								 mapObjTemp.put(""+j, "["+answer+"]");
+							 }else {
+								 mapObjTemp.put(""+j, "\""+answer+"\"");
+							 }
+						}
+						
+				}
+			 }else {
+				 mapObjTemp.put(""+j, st1[i]);
+			 }
+			
+		 }
+		return mapObjTemp;
+	}
 	public static String reShufflingTheString(String st) {		 
 		String[]  strArr = st.split("");
 		 Stack<String> stackTemp = new Stack<String>();
