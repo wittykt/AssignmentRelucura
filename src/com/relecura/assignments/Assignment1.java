@@ -44,39 +44,47 @@ public class Assignment1 {
 //		String input1 = "( (java NEAR2 collection)  NEAR framework) OR  (java ADJ3 collection) AND (java NEAR3 multithreading)";
 //	   getOutputOngivenConditions(input1);
 		
-		System.out.println("--------------");
-		System.out.println("Test Case 5:");
-		String input1 = "( (java NEAR2 collection)  NEAR framework) ";
-	   getOutputOngivenConditions(input1);
-		
+//		System.out.println("--------------");
+//		System.out.println("Test Case 5:");
+//		String input1 = "( (java NEAR2 collection)  NEAR framework) ";
+//	   getOutputOngivenConditions(input1);
+//		
 //	   System.out.println("--------------");
 //		System.out.println("Test Case2:");
 //		String input0 = "(a NEAR3 b)";
 //		getOutputOngivenConditions(input0);
-//		
+		
 //		System.out.println("--------------");
 //		System.out.println("Test Case3:Unchanged Output");
 //		String input2 = "(((a AND b) OR c) OR (d AND e))";
 //		getOutputOngivenConditions(input2);
+	   
+		System.out.println("--------------");
+		System.out.println("Test Case 6:");
+		String input6 = "((a NEAR2 b) NEAR c)";
+	    getOutputOngivenConditions(input6);
+	   
 	}
 	 public static void getOutputOngivenConditions(String input1) {
 		
 		 String orgStr = input1;
 		 if(input1.contains("NEAR") ||  input1.contains("ADJ") ) {
-			 List<String> list = new ArrayList<>();
 			 StringBuffer sb = new StringBuffer();
 			 String replacedStr = replaceNEARandADJ(input1);
 			 
-			 Map<String, Object> mapObjTemp = getStringBetweenBraces(replacedStr);
-			 for (Entry<String, Object> entry : mapObjTemp.entrySet()) {
-				 if(entry.getValue().toString().contains(constantNEAR_SYMBOL) || entry.getValue().toString().contains(constantADJ_SYMBOL) ) {
-					 String shuffledStr  = reShufflingTheString(entry.getValue().toString());
-					 sb.append(shuffledStr);
-				 }else {
-					 sb.append(entry.getValue().toString());
-				 }
-				
-			}
+			 String res  = assignBracketsRecursively(replacedStr);
+			 System.out.println("Result:"+res);
+//		Working Code	
+//			 Map<String, Object> mapObjTemp = getStringBetweenBraces(replacedStr);
+//			 for (Entry<String, Object> entry : mapObjTemp.entrySet()) {
+//				 if(entry.getValue().toString().contains(constantNEAR_SYMBOL) || entry.getValue().toString().contains(constantADJ_SYMBOL) ) {
+//					 String shuffledStr  = reShufflingTheString(entry.getValue().toString());
+//					 sb.append(shuffledStr);
+//				 }else {
+//					 sb.append(entry.getValue().toString());
+//				 }
+//				
+//			}
 			 System.out.println(sb.toString());
 
 		 }else {
@@ -116,7 +124,7 @@ public class Assignment1 {
 		 Stack<String> stack = new Stack<String>();
 		 boolean flag = false;
 		 
-		 StringBuffer sbTemp = new StringBuffer();
+		// StringBuffer sbTemp = new StringBuffer();
 		 for (int i = 0; i < st1.length; i++) {
 			
 			 if(st1[i].equalsIgnoreCase("(")) {
@@ -140,6 +148,50 @@ public class Assignment1 {
 				 
 		 return shuffledStr;
 	 }
+	
+	public static String assignBracketsRecursively(String str) {
+		if(str.length()==0) return str;
+		else {
+			//String reshuffled = null;
+			 String answer = str;
+			 String temp = null;
+			boolean flag = false;
+			 if(str.contains("(")) {
+				 Stack<String> stack = new Stack<String>(); 
+				 if(answer.contains("(")) {
+					 stack.push("(");
+				 }
+				 if(!stack.isEmpty() ) {
+					if(answer.contains(")")) {
+						flag = stack.pop().equalsIgnoreCase("(") ? true:false;
+						if(flag) { 
+								 answer = str.substring(str.indexOf("(")+1,str.indexOf(")"));
+								 if(answer.contains("(")) {
+									 temp = assignBracketsRecursively(answer);
+								 }else {
+									 answer = reShufflingTheString(answer);
+								 }
+								 answer = "\""+temp+"\"";
+						}
+							
+				    }else {
+				      answer = str.substring(str.indexOf("(")+1,str.length());
+				      answer = "["+answer+"]";
+				      answer = reShufflingTheString(answer);
+				    }
+					if(answer.contains("(")) {
+						 assignBracketsRecursively(answer);
+					}
+				}
+				
+			}
+			return answer;
+				
+
+		}
+ 	}
+	
+
 	public static  Map<String, Object> getStringBetweenBraces(String str) {
 		 String[] st1 = str.split("");
 		 Stack<String> stack = new Stack<String>();
@@ -158,10 +210,16 @@ public class Assignment1 {
 						flag = stack.pop().equalsIgnoreCase("(") ? true:false;
 						if(flag) {
 							Integer temp = stackTemp.pop();
-							 String answer = str.substring(temp+1,i);
 							 if(!stack.isEmpty()) {
+								 String answer = str.substring(temp+1,i);
 								 mapObjTemp.put(""+j, "["+answer+"]");
+								 
 							 }else {
+								 String answer = str.substring(temp+1,i);
+								 if(answer.contains("(")) {
+									 String temp1 =getSubstringWithBraces(answer);
+									 mapObjTemp.put(""+j, "\""+temp1+"\"");  
+								 }
 								 mapObjTemp.put(""+j, "\""+answer+"\"");
 							 }
 						}
@@ -174,6 +232,14 @@ public class Assignment1 {
 		 }
 		return mapObjTemp;
 	}
+	
+	public static String getSubstringWithBraces(String str) {
+		String answer = str.substring(str.indexOf(")")+1,str.length());
+		String temp = reShufflingTheString(answer);
+		return temp;
+	}
+	
+	
 	public static String reShufflingTheString(String st) {		 
 		String[]  strArr = st.split("");
 		 Stack<String> stackTemp = new Stack<String>();
