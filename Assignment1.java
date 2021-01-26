@@ -3,6 +3,7 @@ package com.relecura.assignments;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,8 +19,6 @@ import java.util.Stack;
  * The AND/OR operator should be unchanged. -done
  * The open and close parentheses should be handled and checked for proper opening and closing.
  * Few more input and output examples for reference.
- * Input => (((a NEAR2 b) NEAR c) NEAR2 (d AND e))
- * Output => "[[a b]~2 c]~1 (d e)"~2
  * Input => (((a AND b) OR c) OR (d AND e))
  * Output => (((a AND b) OR c) OR (d AND e)).   
  * Note that the output is unchanged as it does not contains NEAR/ADJ  -done
@@ -40,34 +39,25 @@ public class Assignment1 {
 	public static void main(String[] args) {
 
 		System.out.println("--------------");
-		System.out.println("Test Case1:");
+		System.out.println("Test Case1:( (java NEAR2 collection)  NEAR framework) OR  (java ADJ3 collection) AND (java NEAR3 multithreading)");
 		String input1 = "( (java NEAR2 collection)  NEAR framework) OR  (java ADJ3 collection) AND (java NEAR3 multithreading)";
-	   getOutputOngivenConditions(input1);
-		
-//		System.out.println("--------------");
-//		System.out.println("Test Case 5:");
-//		String input1 = "( (java NEAR2 collection)  NEAR framework) ";
-//	   getOutputOngivenConditions(input1);
-//		
-//	   System.out.println("--------------");
-//		System.out.println("Test Case2:");
-//		String input0 = "(a NEAR3 b)";
-//		getOutputOngivenConditions(input0);
-		
-//		System.out.println("--------------");
-//		System.out.println("Test Case3:Unchanged Output");
-//		String input2 = "(((a AND b) OR c) OR (d AND e))";
-//		getOutputOngivenConditions(input2);
-	   
-//		System.out.println("--------------");
-//		System.out.println("Test Case 6:");
-//		String input6 = "((a NEAR2 b) NEAR c)";
-//	    getOutputOngivenConditions(input6);
+	    getOutputOngivenConditions(input1);
+			
+	    System.out.println("--------------");
+		System.out.println("Test Case 3: (((a NEAR2 b) NEAR c) NEAR2 (d AND e))");
+		String input0 = "(((a NEAR2 b) NEAR c) NEAR2 (d AND e))";
+		getOutputOngivenConditions(input0);
 		
 		System.out.println("--------------");
-		System.out.println("Test Case 7: (((a NEAR2 b) NEAR c) NEAR2 d)");
-		String input7  = "(((a NEAR2 b) NEAR c) NEAR2 d)"; //"[[a b]~2 c]~1 d"~2
+		System.out.println("Test Case 4: (((a NEAR2 b) NEAR c) NEAR3 d)  ");
+		String input7  = "(((a NEAR2 b) NEAR c) NEAR3 d)"; 
 	    getOutputOngivenConditions(input7);
+	    
+	    System.out.println("--------------");
+		System.out.println("Test Case 5: ((a NEAR2 b) NEAR c) ");
+		String input8  = "((a NEAR2 b) NEAR c)"; 
+	    getOutputOngivenConditions(input8);
+	    
 	   
 	}
 	 public static void getOutputOngivenConditions(String input1) {
@@ -75,10 +65,9 @@ public class Assignment1 {
 		 String orgStr = input1;
 		 if(input1.contains("NEAR") ||  input1.contains("ADJ") ) {
 			 String replacedStr = replaceNEARandADJ(input1);
-			 String replacedBracketsStr = replacingStringWithSquareBraces(replacedStr);
-
+			 String reShuffled = reShufflingTheString(replacedStr);
+			 String replacedBracketsStr = replacingStringWithSquareBraces(reShuffled);
 			 System.out.println(replacedBracketsStr);
-
 		 }else {
 			 System.out.println(orgStr);
 		 }
@@ -88,6 +77,7 @@ public class Assignment1 {
 	 public static String replacingStringWithSquareBraces(String str) {
 		 Stack<String> stack = new Stack<String>();
 		 boolean flag= false;
+		
 		 while(str.contains("(")) {
 			 String chkOpenBraces = str; 
 			 while(chkOpenBraces.contains("(")) {
@@ -96,9 +86,9 @@ public class Assignment1 {
 			 }
 			  String tempBegin =str.substring(0,str.indexOf("("));
 			 String tempStr1  = str.substring(str.indexOf(")")+1, str.length());
- 		  	 String  tempStr = str.substring(str.indexOf("(")+1, str.contains(")")?str.indexOf(")")+1:str.length());
+		  	 String  tempStr = str.substring(str.indexOf("(")+1, str.contains(")")?str.indexOf(")")+1:str.length());
 			 String replaceStr = null;
-						
+			 
 			 if(!stack.isEmpty() ) {
 				 if(tempStr.contains(")")) {
 					 flag = stack.pop().equalsIgnoreCase("(") ? true:false;
@@ -111,7 +101,6 @@ public class Assignment1 {
 						 replaceStr = replaceStr.replace(")", "");
 						 replaceStr = "\""+replaceStr+"\"";
 					 }
-								 
 				 }
 			 }
 			 String tempOpenBraces = "";
@@ -146,12 +135,14 @@ public class Assignment1 {
 		}
 		 return sb.toString();
 	 }
-	
-	public static String reShufflingTheString(String st) {		 
-		String[]  strArr = st.split("");
-		 Stack<String> stackTemp = new Stack<String>();
-		 StringBuffer sbBuffer = new StringBuffer();
-		 for (int i = 0; i < strArr.length; i++) {
+	 
+
+		public static String reShufflingTheStringWorks(String str) {	
+			String[]  strArr = str.split("");
+			 Stack<String> stackTemp = new Stack<String>();
+			 StringBuffer sbBuffer = new StringBuffer();
+			 
+			 for (int i = 0; i < strArr.length; i++) {
 			 if (strArr[i].equalsIgnoreCase("~") &&  strArr[i+1].equalsIgnoreCase(">") ) {
 				 stackTemp.push(strArr[i+2]);
 				 stackTemp.push(strArr[i+1]); 
@@ -171,6 +162,38 @@ public class Assignment1 {
 				 sbBuffer.append(stackTemp.pop());
 			 }
 		 }
+		
+		 return sbBuffer.toString();
+		}
+	
+	public static String reShufflingTheString(String str) {		 
+		 StringBuffer sbBuffer = new StringBuffer();
+		 List<String> list = new LinkedList<String>();
+		 
+		 String arr[] = str.split("");
+		 for (int i = arr.length-1; i>=0; i--) {
+			if(str!=null && str.length()>0) {
+				if(arr[i].equalsIgnoreCase(")")) {
+					String temp1 = str.substring(i+1,str.length());
+					str = str.substring(0, i+1);
+					if(temp1!=null && !temp1.equalsIgnoreCase("")) {
+						String restemp1 = reShufflingTheStringWorks(temp1);
+						list.add(restemp1);
+					}
+				}else if(arr[i].equalsIgnoreCase("(")) {
+					String temp1 = str.substring(i,str.length());
+					str = str.substring(0, i);
+					String restemp1 = reShufflingTheStringWorks(temp1);
+					list.add(restemp1);
+				}
+			}
+			
+		 }
+
+		 for (int i = list.size(); i-- > 0; ) {
+			 sbBuffer.append(list.get(i));
+		 }
+
 		 return sbBuffer.toString();
 	}
 }
